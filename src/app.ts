@@ -1,15 +1,17 @@
 import cookieParser from "cookie-parser";
 import express, { type Application } from "express";
 import cors from "cors";
+import config from "./app/config";
 
 const app: Application = express();
 
 // __) parsers
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://kidshutbd.com"],
+    origin: config.app_url,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: [
