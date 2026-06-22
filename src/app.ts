@@ -7,6 +7,8 @@ import { prisma } from "./lib/prisma";
 import AppError from "./app/utils/AppError";
 import bcrypt from "bcryptjs";
 import userRouter from "./app/modules/user/user.route";
+import GlobalErrorHandler from "./app/middlewares/GlobalErrorHandler";
+import NotFound from "./app/middlewares/NotFound";
 
 const app: Application = express();
 
@@ -37,7 +39,7 @@ app.get("/", (req, res) => {
   res.send(`This app listening on port ${3000}`);
 });
 
-// app.use(GlobalErrorHandler);
-// app.use(NotFound);
+app.use(GlobalErrorHandler);
+app.use(NotFound);
 
 export default app;
