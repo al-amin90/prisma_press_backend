@@ -5,7 +5,7 @@ import { prisma } from "./lib/prisma";
 async function main() {
   try {
     await prisma.$connect();
-    console.log("Connected to the server successfully");
+    console.log("Connected to the Database successfully");
 
     app.listen(config.port, () => {
       console.log(`Example app listening on port ${config.port}`);
