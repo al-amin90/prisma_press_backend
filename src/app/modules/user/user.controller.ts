@@ -1,6 +1,10 @@
 import type { Request, Response } from "express";
 import sendResponse from "../../utils/sendResponse";
 import { userServices } from "./user.service";
+import AppError from "../../utils/AppError";
+import { jwtUtils } from "../../utils/jwt";
+import config from "../../config";
+import type { JwtPayload } from "jsonwebtoken";
 
 const registerUser = async (req: Request, res: Response) => {
   const { user } = await userServices.registerUserIntoDB(req.body);
@@ -14,16 +18,24 @@ const registerUser = async (req: Request, res: Response) => {
 };
 
 const getMyProfile = async (req: Request, res: Response) => {
-  const { user } = await userServices.registerUserIntoDB(req.body);
+  const { accessToken } = req.cookies;
+
+  const verifiedToken = jwtUtils.verifyToken(
+    accessToken,
+    config.access_token,
+  ) as JwtPayload;
+
+  const result = await userServices.getUserFromDB(verifiedToken.id);
 
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: "User Created Successfully",
-    data: { user },
+    message: "User Info Get Successfully",
+    data: result,
   });
 };
 
 export const userController = {
-  createUser: registerUser,
+  registerUser,
+  getMyProfile,
 };
