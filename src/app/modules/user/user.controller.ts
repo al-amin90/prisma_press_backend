@@ -18,14 +18,14 @@ const registerUser = async (req: Request, res: Response) => {
 };
 
 const getMyProfile = async (req: Request, res: Response) => {
-  const { accessToken } = req.cookies;
+  // const { accessToken } = req.cookies;
 
-  const verifiedToken = jwtUtils.verifyToken(
-    accessToken,
-    config.access_token,
-  ) as JwtPayload;
+  // const verifiedToken = jwtUtils.verifyToken(
+  //   accessToken,
+  //   config.access_token,
+  // ) as JwtPayload;
 
-  const result = await userServices.getUserFromDB(verifiedToken.id);
+  const result = await userServices.getUserFromDB(req.user?.id as string);
 
   sendResponse(res, {
     statusCode: 200,

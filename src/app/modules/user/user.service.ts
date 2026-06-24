@@ -67,6 +67,7 @@ const getUserFromDB = async (id: string) => {
       profile: true,
     },
   });
+  return user;
 };
 
 export const userServices = {

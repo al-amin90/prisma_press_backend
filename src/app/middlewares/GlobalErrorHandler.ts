@@ -25,7 +25,7 @@ const GlobalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     ];
   }
 
-  console.log("err", err);
+  console.log(":) Global bro", err);
 
   res.status(statusCode).json({
     success: false,
