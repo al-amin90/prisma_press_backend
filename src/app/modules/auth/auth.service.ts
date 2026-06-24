@@ -5,6 +5,7 @@ import AppError from "../../utils/AppError";
 import type { TLoginUser } from "./auth.interface";
 import jwt from "jsonwebtoken";
 import { jwtUtils } from "../../utils/jwt";
+import { ActiveStatus } from "../../../../generated/prisma/enums";
 
 const loginUser = async (payload: TLoginUser) => {
   const { email, password } = payload;
@@ -13,9 +14,9 @@ const loginUser = async (payload: TLoginUser) => {
     where: { email },
   });
 
-  // if (user.status === "blocked") {
-  //   throw new AppError(status.FORBIDDEN, "The User is Blocked");
-  // }
+  if (user.activeStatus === ActiveStatus.BLOCKED) {
+    throw new AppError(403, "You are Blocked");
+  }
 
   const isPasswordMatch = await bcrypt.compare(password, user.password);
 
