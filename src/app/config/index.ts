@@ -9,10 +9,8 @@ export default {
   bcrypt_salt_rounds: process.env.BCRYPT_SALT_ROUNDS,
   app_url: process.env.APP_URL,
 
-  jwt: {
-    access_token: process.env.JWT_ACCESS_TOKEN as string,
-    refresh_token: process.env.JWT_REFRESH_TOKEN as string,
-    access_expires_in: process.env.JWT_ACCESS_EXPIRES_IN as string,
-    refresh_expires_in: process.env.JWT_REFRESH_EXPIRES_IN as string,
-  },
+  access_token: process.env.JWT_ACCESS_TOKEN!,
+  refresh_token: process.env.JWT_REFRESH_TOKEN!,
+  access_expires_in: process.env.JWT_ACCESS_EXPIRES_IN!,
+  refresh_expires_in: process.env.JWT_REFRESH_EXPIRES_IN!,
 };

@@ -3,6 +3,8 @@ import { prisma } from "../../../lib/prisma";
 import config from "../../config";
 import AppError from "../../utils/AppError";
 import type { TLoginUser } from "./auth.interface";
+import jwt from "jsonwebtoken";
+import { jwtUtils } from "../../utils/jwt";
 
 const loginUser = async (payload: TLoginUser) => {
   const { email, password } = payload;
@@ -23,24 +25,26 @@ const loginUser = async (payload: TLoginUser) => {
 
   const jwtPayload = {
     id: user.id,
+    email: user.email,
     role: user.role,
+    name: user.name,
   };
 
-  // const accessToken = createToken(
-  //   jwtPayload,
-  //   config.jwt_access_token as string,
-  //   config.jwt_access_expires_in as string,
-  // );
+  const accessToken = jwtUtils.createToken(
+    jwtPayload,
+    config.access_token,
+    config.access_expires_in,
+  );
 
-  // const refreshToken = createToken(
-  //   jwtPayload,
-  //   config.jwt_refresh_token as string,
-  //   config.jwt_refresh_expires_in as string,
-  // );
+  const refreshToken = jwtUtils.createToken(
+    jwtPayload,
+    config.refresh_token,
+    config.refresh_expires_in,
+  );
 
   return {
-    // accessToken,
-    // refreshToken,
+    accessToken,
+    refreshToken,
     user,
   };
 };
