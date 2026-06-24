@@ -5,6 +5,7 @@ import config from "./app/config";
 import userRouter from "./app/modules/user/user.route";
 import GlobalErrorHandler from "./app/middlewares/GlobalErrorHandler";
 import NotFound from "./app/middlewares/NotFound";
+import { authRouter } from "./app/modules/auth/auth.route";
 
 const app: Application = express();
 
@@ -29,7 +30,8 @@ app.use(
 );
 
 // __) all application route here
-app.use("/api/auth", userRouter);
+app.use("/api/users", userRouter);
+app.use("/api/auth", authRouter);
 
 app.get("/", (req, res) => {
   res.send(`This app listening on port ${3000}`);
