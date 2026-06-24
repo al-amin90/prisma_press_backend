@@ -3,26 +3,34 @@
 import { authServices } from "./auth.service";
 import config from "../../config";
 import sendResponse from "../../utils/sendResponse";
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 
 const loginUser = async (req: Request, res: Response) => {
   const result = await authServices.loginUser(req.body);
 
-  // const { refreshToken, accessToken, needsPasswordChange } = result;
+  const { refreshToken, accessToken } = result;
 
-  // res.cookie("refreshToken", refreshToken, {
-  //   secure: config.node_env === "production",
-  //   httpOnly: true,
-  // });
+  res.cookie("accessToken", accessToken, {
+    secure: config.node_env === "production",
+    httpOnly: true,
+    sameSite: "none",
+    maxAge: 1000 * 60 * 60 * 24,
+  });
+
+  res.cookie("refreshToken", refreshToken, {
+    secure: config.node_env === "production",
+    httpOnly: true,
+    sameSite: "none",
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  });
 
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "User is logged in Successfully",
     data: {
-      user: result.user,
-      // accessToken,
-      // needsPasswordChange,
+      accessToken,
+      refreshToken,
     },
   });
 };
