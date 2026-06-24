@@ -7,6 +7,11 @@ const router = Router();
 
 router.post("/register", userController.registerUser);
 router.post("/me", auth(Role.ADMIN, Role.USER), userController.getMyProfile);
+router.put(
+  "/my-profile",
+  auth(Role.ADMIN, Role.USER),
+  userController.updateMyProfile,
+);
 
 const userRouter = router;
 export default userRouter;

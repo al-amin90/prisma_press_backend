@@ -21,10 +21,11 @@ declare global {
 
 const auth = (...requiredRoles: string[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.cookies.accessToken;
-    //   req.headers.authorization?.startsWith("Bearer ")
-    //     ? req.headers.authorization?.split(" ")[0]
-    //     : req.headers.authorization;
+    const token = req.cookies.accessToken
+      ? req.cookies.accessToken
+      : req.headers.authorization?.startsWith("Bearer")
+        ? req.headers.authorization?.split(" ")[1]
+        : req.headers.authorization;
 
     if (!token) {
       throw new AppError(403, "You are not Loged in!");

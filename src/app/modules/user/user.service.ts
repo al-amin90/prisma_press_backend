@@ -2,12 +2,13 @@ import bcrypt from "bcryptjs";
 import { prisma } from "../../../lib/prisma";
 import AppError from "../../utils/AppError";
 import config from "../../config";
+import type { Role } from "../../../../generated/prisma/enums";
 
 type IUser = {
   name: string;
   email: string;
   password: string;
-  role: "admin" | "user" | "manager" | "super_admin";
+  role: Role;
   profilePhoto?: string | null;
 };
 
@@ -70,7 +71,35 @@ const getUserFromDB = async (id: string) => {
   return user;
 };
 
+const updateUserFromDB = async (id: string, payload: any) => {
+  const { name, email, password, role, profilePhoto, bio } = payload;
+
+  const updatedUser = await prisma.user.update({
+    where: { id },
+    data: {
+      name,
+      email,
+      role,
+
+      profile: {
+        update: {
+          bio,
+          profilePhoto,
+        },
+      },
+    },
+
+    omit: { password: true },
+    include: {
+      profile: true,
+    },
+  });
+
+  return updatedUser;
+};
+
 export const userServices = {
   registerUserIntoDB,
   getUserFromDB,
+  updateUserFromDB,
 };

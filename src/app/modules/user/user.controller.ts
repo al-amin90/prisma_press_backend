@@ -1,10 +1,6 @@
 import type { Request, Response } from "express";
 import sendResponse from "../../utils/sendResponse";
 import { userServices } from "./user.service";
-import AppError from "../../utils/AppError";
-import { jwtUtils } from "../../utils/jwt";
-import config from "../../config";
-import type { JwtPayload } from "jsonwebtoken";
 
 const registerUser = async (req: Request, res: Response) => {
   const { user } = await userServices.registerUserIntoDB(req.body);
@@ -35,7 +31,22 @@ const getMyProfile = async (req: Request, res: Response) => {
   });
 };
 
+const updateMyProfile = async (req: Request, res: Response) => {
+  const result = await userServices.updateUserFromDB(
+    req.user?.id as string,
+    req.body,
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Profile Updated Successfully",
+    data: result,
+  });
+};
+
 export const userController = {
   registerUser,
   getMyProfile,
+  updateMyProfile,
 };
