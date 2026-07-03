@@ -29,6 +29,22 @@ const getAllPosts = async (req: Request, res: Response) => {
   });
 };
 
+const getPostById = async (req: Request, res: Response) => {
+  const postId = req.params.postId;
+
+  if (!postId) {
+    throw new Error("Post ID is required");
+  }
+  const result = await postServices.getPostById(postId as string);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "posts retrieved Successfully",
+    data: result,
+  });
+};
+
 // const getPostsStats = async (req: Request, res: Response) => {
 //   const result = await postServices.loginUser(req.body);
 
@@ -40,27 +56,16 @@ const getAllPosts = async (req: Request, res: Response) => {
 //   });
 // };
 
-// const getMyPosts = async (req: Request, res: Response) => {
-//   const result = await postServices.loginUser(req.body);
+const getMyPosts = async (req: Request, res: Response) => {
+  const result = await postServices.getMyPosts(req.user?.id as string);
 
-//   sendResponse(res, {
-//     statusCode: 200,
-//     success: true,
-//     message: "User is logged in Successfully",
-//     data: {},
-//   });
-// };
-
-// const getPostById = async (req: Request, res: Response) => {
-//   const result = await postServices.loginUser(req.body);
-
-//   sendResponse(res, {
-//     statusCode: 200,
-//     success: true,
-//     message: "User is logged in Successfully",
-//     data: {},
-//   });
-// };
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Author posts retrieved Successfully",
+    data: result,
+  });
+};
 
 // const updatePost = async (req: Request, res: Response) => {
 //   const result = await postServices.loginUser(req.body);
@@ -88,8 +93,8 @@ export const postControllers = {
   createPost,
   getAllPosts,
   // getPostsStats,
-  // getMyPosts,
-  // getPostById,
+  getMyPosts,
+  getPostById,
   // updatePost,
   // deletePost,
 };

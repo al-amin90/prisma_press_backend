@@ -15,13 +15,13 @@ router.get("/", postControllers.getAllPosts);
 
 // router.get("/stats", auth(Role.ADMIN), postControllers.getPostsStats);
 
-// router.get(
-//   "/my-posts",
-//   auth(Role.ADMIN, Role.USER, Role.AUTHOR),
-//   postControllers.getMyPosts,
-// );
+router.get(
+  "/my-posts",
+  auth(Role.ADMIN, Role.USER, Role.AUTHOR),
+  postControllers.getMyPosts,
+);
 
-// router.get("/:postId", postControllers.getPostById);
+router.get("/:postId", postControllers.getPostById);
 
 // router.patch(
 //   "/:postId",
