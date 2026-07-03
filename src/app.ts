@@ -6,6 +6,8 @@ import userRouter from "./app/modules/user/user.route";
 import GlobalErrorHandler from "./app/middlewares/GlobalErrorHandler";
 import NotFound from "./app/middlewares/NotFound";
 import { authRouter } from "./app/modules/auth/auth.route";
+import { commentRouter } from "./app/modules/comment/comment.route";
+import { postRouter } from "./app/modules/post/post.route";
 
 const app: Application = express();
 
@@ -32,6 +34,8 @@ app.use(
 // __) all application route here
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/posts", postRouter);
+app.use("/api/comments", commentRouter);
 
 app.get("/", (req, res) => {
   res.send(`This app listening on port ${3000}`);

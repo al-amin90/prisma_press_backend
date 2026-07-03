@@ -1,0 +1,95 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+import sendResponse from "../../utils/sendResponse";
+import type { Request, Response } from "express";
+import { postServices } from "./post.service";
+
+const createPost = async (req: Request, res: Response) => {
+  const result = await postServices.createPost(
+    req.body,
+    req.user?.id as string,
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Post created successfully",
+    data: result,
+  });
+};
+
+const getAllPosts = async (req: Request, res: Response) => {
+  const result = await postServices.getAllPosts();
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "All posts retrieved successfully",
+    data: result,
+  });
+};
+
+// const getPostsStats = async (req: Request, res: Response) => {
+//   const result = await postServices.loginUser(req.body);
+
+//   sendResponse(res, {
+//     statusCode: 200,
+//     success: true,
+//     message: "User is logged in Successfully",
+//     data: {},
+//   });
+// };
+
+// const getMyPosts = async (req: Request, res: Response) => {
+//   const result = await postServices.loginUser(req.body);
+
+//   sendResponse(res, {
+//     statusCode: 200,
+//     success: true,
+//     message: "User is logged in Successfully",
+//     data: {},
+//   });
+// };
+
+// const getPostById = async (req: Request, res: Response) => {
+//   const result = await postServices.loginUser(req.body);
+
+//   sendResponse(res, {
+//     statusCode: 200,
+//     success: true,
+//     message: "User is logged in Successfully",
+//     data: {},
+//   });
+// };
+
+// const updatePost = async (req: Request, res: Response) => {
+//   const result = await postServices.loginUser(req.body);
+
+//   sendResponse(res, {
+//     statusCode: 200,
+//     success: true,
+//     message: "User is logged in Successfully",
+//     data: {},
+//   });
+// };
+
+// const deletePost = async (req: Request, res: Response) => {
+//   const result = await postServices.loginUser(req.body);
+
+//   sendResponse(res, {
+//     statusCode: 200,
+//     success: true,
+//     message: "User is logged in Successfully",
+//     data: {},
+//   });
+// };
+
+export const postControllers = {
+  createPost,
+  getAllPosts,
+  // getPostsStats,
+  // getMyPosts,
+  // getPostById,
+  // updatePost,
+  // deletePost,
+};
