@@ -87,9 +87,64 @@ const getMyPosts = async (authorId: string) => {
   return result;
 };
 
-const updatePost = async () => {};
+const updatePost = async (
+  postId: string,
+  payload: Partial<ICreatePostPayload>,
+  authorId: string,
+  isAdmin: boolean,
+) => {
+  const post = await prisma.post.findUniqueOrThrow({
+    where: {
+      id: postId,
+    },
+  });
 
-const deletePost = async () => {};
+  if (!isAdmin && post.authorId !== authorId) {
+    throw new AppError(403, "You are not authorized to update this post");
+  }
+
+  const result = await prisma.post.update({
+    where: {
+      id: postId,
+    },
+    data: {
+      ...payload,
+    },
+
+    include: {
+      comments: true,
+      author: {
+        omit: {
+          password: true,
+        },
+      },
+    },
+  });
+
+  return result;
+};
+
+const deletePost = async (
+  postId: string,
+  authorId: string,
+  isAdmin: boolean,
+) => {
+  const post = await prisma.post.findUniqueOrThrow({
+    where: {
+      id: postId,
+    },
+  });
+
+  if (!isAdmin && post.authorId !== authorId) {
+    throw new AppError(403, "You are not owner this post");
+  }
+
+  await prisma.post.delete({
+    where: {
+      id: postId,
+    },
+  });
+};
 
 export const postServices = {
   createPost,

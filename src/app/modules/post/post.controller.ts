@@ -3,6 +3,7 @@
 import sendResponse from "../../utils/sendResponse";
 import type { Request, Response } from "express";
 import { postServices } from "./post.service";
+import { Role } from "../../../../generated/prisma/enums";
 
 const createPost = async (req: Request, res: Response) => {
   const result = await postServices.createPost(
@@ -67,27 +68,48 @@ const getMyPosts = async (req: Request, res: Response) => {
   });
 };
 
-// const updatePost = async (req: Request, res: Response) => {
-//   const result = await postServices.loginUser(req.body);
+const updatePost = async (req: Request, res: Response) => {
+  const postId = req.params.postId;
 
-//   sendResponse(res, {
-//     statusCode: 200,
-//     success: true,
-//     message: "User is logged in Successfully",
-//     data: {},
-//   });
-// };
+  if (!postId) {
+    throw new Error("Post ID is required");
+  }
 
-// const deletePost = async (req: Request, res: Response) => {
-//   const result = await postServices.loginUser(req.body);
+  const result = await postServices.updatePost(
+    postId as string,
+    req.body,
+    req.user?.id as string,
+    req.user?.role === Role.ADMIN,
+  );
 
-//   sendResponse(res, {
-//     statusCode: 200,
-//     success: true,
-//     message: "User is logged in Successfully",
-//     data: {},
-//   });
-// };
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Post updated successfully",
+    data: result,
+  });
+};
+
+const deletePost = async (req: Request, res: Response) => {
+  const postId = req.params.postId;
+
+  if (!postId) {
+    throw new Error("Post ID is required");
+  }
+
+  await postServices.deletePost(
+    postId as string,
+    req.user?.id as string,
+    req.user?.role === Role.ADMIN,
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Post Deleted Successfully",
+    data: null,
+  });
+};
 
 export const postControllers = {
   createPost,
@@ -95,6 +117,6 @@ export const postControllers = {
   // getPostsStats,
   getMyPosts,
   getPostById,
-  // updatePost,
-  // deletePost,
+  updatePost,
+  deletePost,
 };
