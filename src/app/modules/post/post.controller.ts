@@ -46,16 +46,16 @@ const getPostById = async (req: Request, res: Response) => {
   });
 };
 
-// const getPostsStats = async (req: Request, res: Response) => {
-//   const result = await postServices.loginUser(req.body);
+const getPostsStats = async (req: Request, res: Response) => {
+  const result = await postServices.getPostsStats();
 
-//   sendResponse(res, {
-//     statusCode: 200,
-//     success: true,
-//     message: "User is logged in Successfully",
-//     data: {},
-//   });
-// };
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Posts stats retrieved Successfully",
+    data: result,
+  });
+};
 
 const getMyPosts = async (req: Request, res: Response) => {
   const result = await postServices.getMyPosts(req.user?.id as string);
@@ -114,7 +114,7 @@ const deletePost = async (req: Request, res: Response) => {
 export const postControllers = {
   createPost,
   getAllPosts,
-  // getPostsStats,
+  getPostsStats,
   getMyPosts,
   getPostById,
   updatePost,
