@@ -1,4 +1,5 @@
 import { CommentStatus, PostStatus } from "../../../../generated/prisma/enums";
+import type { PostWhereInput } from "../../../../generated/prisma/models";
 import { prisma } from "../../../lib/prisma";
 import AppError from "../../utils/AppError";
 import type { ICreatePostPayload, IPostQuery } from "./post.interface";
@@ -20,6 +21,50 @@ const getAllPosts = async (query: IPostQuery) => {
   const skip = (page - 1) * limit;
   const sortBy = query.sortBy ? query.sortBy : "createdAt";
   const sortOrder = query.sortOrder ? query.sortOrder : "desc";
+
+  const andCondition: PostWhereInput[] = [];
+
+  if (query.searchTerm) {
+    andCondition.push({
+      OR: [
+        {
+          title: {
+            contains: query.searchTerm,
+            mode: "insensitive",
+          },
+        },
+        {
+          content: {
+            contains: query.searchTerm,
+            mode: "insensitive",
+          },
+        },
+      ],
+    });
+  }
+
+  if (query.title) {
+    andCondition.push({ title: query.title });
+  }
+  if (query.content) {
+    andCondition.push({ content: query.content });
+  }
+  if (query.status) {
+    andCondition.push({ status: query.status });
+  }
+  if (query.isFeatured) {
+    andCondition.push({ isFeatured: query.isFeatured });
+  }
+  if (query.authorId) {
+    andCondition.push({ authorId: query.authorId });
+  }
+  if (query.tags) {
+    andCondition.push({
+      tags: {
+        hasSome: JSON.parse(query.tags as string),
+      },
+    });
+  }
 
   const result = await prisma.post.findMany({
     // searching & filtering combain
@@ -55,29 +100,7 @@ const getAllPosts = async (query: IPostQuery) => {
     // skip: 2, // skip
 
     where: {
-      AND: [
-        // searching
-        {
-          OR: [
-            {
-              title: {
-                contains: query.searchTerm,
-                mode: "insensitive",
-              },
-            },
-            {
-              content: {
-                contains: query.searchTerm,
-                mode: "insensitive",
-              },
-            },
-          ],
-        },
-
-        // filtering
-        query.title ? { title: query.title } : {},
-        query.content ? { content: query.content } : {},
-      ],
+      AND: andCondition,
     },
 
     // pagination
