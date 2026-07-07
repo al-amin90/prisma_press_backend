@@ -5,8 +5,8 @@ import { type NextFunction, type Request, type Response } from "express";
 const NotFound = (req: Request, res: Response, next: NextFunction) => {
   res.status(404).json({
     success: false,
-    message: "Not Found!",
-    error: "",
+    message: "Route Not Found!",
+    error: req.originalUrl,
   });
 };
 
