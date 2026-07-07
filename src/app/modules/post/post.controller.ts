@@ -20,7 +20,7 @@ const createPost = async (req: Request, res: Response) => {
 };
 
 const getAllPosts = async (req: Request, res: Response) => {
-  const result = await postServices.getAllPosts();
+  const result = await postServices.getAllPosts(req.query);
 
   sendResponse(res, {
     statusCode: 200,
