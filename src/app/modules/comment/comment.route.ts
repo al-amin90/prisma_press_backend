@@ -33,7 +33,7 @@ router.delete(
 
 router.patch(
   "/:commentId/moderate",
-  auth(Role.ADMIN, Role.USER, Role.AUTHOR),
+  auth(Role.ADMIN),
   commentController.moderateComment,
 );
 
