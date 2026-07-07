@@ -17,34 +17,37 @@ const createPost = async (payload: ICreatePostPayload, userId: string) => {
 const getAllPosts = async () => {
   const result = await prisma.post.findMany({
     // searching & filtering combain
-    where: {
-      AND: [
-        // searching
-        {
-          OR: [
-            {
-              title: {
-                contains: "Ro",
-                mode: "insensitive",
-              },
-            },
-            {
-              content: {
-                contains: "ro",
-                mode: "insensitive",
-              },
-            },
-          ],
-        },
-        // filtering
-        // {
-        //   title: "Cris Ronaldo",
-        // },
-        {
-          content: "Ronaldo",
-        },
-      ],
-    },
+    // where: {
+    //   AND: [
+    //     // searching
+    //     {
+    //       OR: [
+    //         {
+    //           title: {
+    //             contains: "Ro",
+    //             mode: "insensitive",
+    //           },
+    //         },
+    //         {
+    //           content: {
+    //             contains: "ro",
+    //             mode: "insensitive",
+    //           },
+    //         },
+    //       ],
+    //     },
+    //     // filtering
+    //     // {
+    //     //   title: "Cris Ronaldo",
+    //     // },
+    //     {
+    //       content: "Ronaldo",
+    //     },
+    //   ],
+    // },
+
+    take: 1, // limit
+    skip: 2, // skip
 
     // include: {
     //   author: {
