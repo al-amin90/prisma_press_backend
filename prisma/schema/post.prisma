@@ -8,6 +8,8 @@ model Post {
   tags String[]
   views      Int        @default(0)
 
+  isPremium Boolean    @default(false)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
