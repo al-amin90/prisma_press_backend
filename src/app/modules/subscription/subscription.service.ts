@@ -3,61 +3,44 @@ import { prisma } from "../../../lib/prisma";
 import AppError from "../../utils/AppError";
 import config from "../../config";
 import type { Role } from "../../../../generated/prisma/enums";
+import { stripe } from "../../../lib/stripe";
 
-type IUser = {
-  name: string;
-  email: string;
-  password: string;
-  role: Role;
-  profilePhoto?: string | null;
-};
-
-const createCheckoutSession = async (payload: IUser) => {
-  const { name, email, password, role, profilePhoto } = payload;
-
-  const isExisted = await prisma.user.findUnique({
-    where: { email },
-  });
-
-  if (isExisted) {
-    throw new AppError(500, "user already exists");
-  }
-
-  const hashPassword = await bcrypt.hash(
-    password,
-    Number(config.bcrypt_salt_rounds),
-  );
-
-  const createdUser = await prisma.user.create({
-    data: {
-      name,
-      email,
-      password: hashPassword,
-      profile: {
-        create: {
-          profilePhoto,
-        },
+const createCheckoutSession = async (userId: string) => {
+  const transactionResult = await prisma.$transaction(async (tx) => {
+    const user = await tx.user.findUniqueOrThrow({
+      where: {
+        id: userId,
       },
-    },
-  });
-  // await prisma.profile.create({
-  //   data: {
-  //     userId: createdUser.id,
-  //     profilePhoto,
-  //   },
-  // });
+      include: {
+        subscription: true,
+      },
+    });
 
-  const user = await prisma.user.findUnique({
-    where: {
-      id: createdUser.id,
-      email: createdUser.email,
-    },
-    omit: { password: true },
-    include: {
-      profile: true,
-    },
+    let stripeCustomerId = user.subscription?.stripeCustomerId;
+
+    if (stripeCustomerId) {
+      const customer = await stripe.customers.create({
+        email: user?.email,
+        name: user.name,
+        metadata: { userId: user.id },
+      });
+
+      stripeCustomerId = customer.id;
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      line_items: [{ price: config.stripe_product_price_key, quantity: 1 }],
+      mode: "subscription",
+      customer: stripeCustomerId,
+      payment_method_types: ["card"],
+      success_url: `${config.app_url}/premium?success=true`,
+      cancel_url: `${config.app_url}/payment?success=false`,
+      metadata: { userId: user.id },
+    });
+
+    return session.url;
   });
-  return { user };
+  return transactionResult;
 };
 
 export const subscriptionServices = {
