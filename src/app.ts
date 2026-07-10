@@ -8,6 +8,7 @@ import NotFound from "./app/middlewares/NotFound";
 import { authRouter } from "./app/modules/auth/auth.route";
 import { commentRouter } from "./app/modules/comment/comment.route";
 import { postRouter } from "./app/modules/post/post.route";
+import subscriptionRouter from "./app/modules/subscription/subscription.route";
 
 const app: Application = express();
 
@@ -36,6 +37,7 @@ app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/posts", postRouter);
 app.use("/api/comments", commentRouter);
+app.use("/api/subscription", subscriptionRouter);
 
 app.get("/", (req, res) => {
   res.send(`This app listening on port ${3000}`);
