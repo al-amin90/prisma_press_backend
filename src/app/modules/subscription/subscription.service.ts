@@ -43,6 +43,42 @@ const createCheckoutSession = async (userId: string) => {
   return transactionResult;
 };
 
+const handlerWebHook = async (payload: Buffer, signature: string) => {
+  const endpointSecret = config.stripe_webhook_secret;
+
+  const event = stripe.webhooks.constructEvent(
+    payload,
+    signature,
+    endpointSecret,
+  );
+
+  // Handle the event
+  switch (event.type) {
+    case "checkout.session.completed":
+      // Occurs when a Checkout Session has been successfully completed.
+      const paymentIntent = event.data.object;
+
+      break;
+    case "customer.subscription.created":
+      // Occurs whenever a customer is signed up for a new plan.
+
+      const paymentMethod = event.data.object;
+
+      break;
+    case "customer.subscription.deleted":
+      // Occurs whenever a customer’s subscription ends.
+
+      const paymentMethod = event.data.object;
+
+      break;
+    default:
+      // Unexpected event type
+      console.log(`Unhandled event type ${event.type}.`);
+
+      break;
+  }
+};
 export const subscriptionServices = {
   createCheckoutSession,
+  handlerWebHook,
 };
