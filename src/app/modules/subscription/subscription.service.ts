@@ -4,6 +4,7 @@ import AppError from "../../utils/AppError";
 import config from "../../config";
 import type { Role } from "../../../../generated/prisma/enums";
 import { stripe } from "../../../lib/stripe";
+import type Stripe from "stripe";
 
 const createCheckoutSession = async (userId: string) => {
   const transactionResult = await prisma.$transaction(async (tx) => {
@@ -56,19 +57,19 @@ const handlerWebHook = async (payload: Buffer, signature: string) => {
   switch (event.type) {
     case "checkout.session.completed":
       // Occurs when a Checkout Session has been successfully completed.
-      const paymentIntent = event.data.object;
+      await checkoutComplete(event.data.object);
 
       break;
     case "customer.subscription.created":
       // Occurs whenever a customer is signed up for a new plan.
 
-      const paymentMethod = event.data.object;
+      // const paymentMethod = event.data.object;
 
       break;
     case "customer.subscription.deleted":
       // Occurs whenever a customer’s subscription ends.
 
-      const paymentMethod = event.data.object;
+      // const paymentMethod = event.data.object;
 
       break;
     default:
@@ -78,6 +79,45 @@ const handlerWebHook = async (payload: Buffer, signature: string) => {
       break;
   }
 };
+
+const getPeriodEnd = async (payload: Stripe.Subscription) => {
+  const currentPeriodEndInMilliseconds = payload.items.data[0]
+    ?.current_period_start as number;
+
+  return new Date(currentPeriodEndInMilliseconds * 1000);
+};
+
+const checkoutComplete = async (session: Stripe.Checkout.Session) => {
+  const userId = session.metadata?.userId;
+  const stripeCustomerId = session.customer as string;
+  const stripeSubscriptionId = session.subscription as string;
+
+  if (!userId || !stripeCustomerId || !stripeSubscriptionId) {
+    throw new Error("web failed");
+  }
+
+  const stripeSubscription =
+    await stripe.subscriptions.retrieve(stripeSubscriptionId);
+
+  const currentPeriodEnd = getPeriodEnd(stripeSubscription);
+
+  await prisma.subscription.upsert({
+    where: { userId },
+    create: {
+      userId,
+      stripeCustomerId,
+      stripeSubscriptionId,
+      currentPeriodEnd,
+    },
+    update: {
+      stripeCustomerId,
+      stripeSubscriptionId,
+      status: "ACTIVE",
+      currentPeriodEnd,
+    },
+  });
+};
+
 export const subscriptionServices = {
   createCheckoutSession,
   handlerWebHook,
