@@ -17,7 +17,7 @@ router.get(
   commentController.getCommentByAuthorId,
 );
 
-router.get("/:commentId", commentController.getCommentById);
+router.get("/:postId", commentController.getCommentByPostId);
 
 router.patch(
   "/:commentId",

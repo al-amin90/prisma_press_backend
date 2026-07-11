@@ -35,17 +35,6 @@ const loginUser = async (req: Request, res: Response) => {
   });
 };
 
-// const changePassword = async (req, res, next) => {
-//   const result = await authServices.changePassword(req.user, req.body);
-
-//   sendResponse(res, {
-//     statusCode: 200,
-//     success: true,
-//     message: "Password change Successfully",
-//     data: [],
-//   });
-// };
-
 const refreshToken = async (req: Request, res: Response) => {
   const { refreshToken } = req.cookies;
 
@@ -70,6 +59,5 @@ const refreshToken = async (req: Request, res: Response) => {
 
 export const authControllers = {
   loginUser,
-  // changePassword,
   refreshToken,
 };

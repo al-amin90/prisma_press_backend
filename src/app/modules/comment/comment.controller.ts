@@ -32,9 +32,9 @@ const getCommentByAuthorId = async (req: Request, res: Response) => {
   });
 };
 
-const getCommentById = async (req: Request, res: Response) => {
-  const result = await commentService.getCommentById(
-    req.params.commentId as string,
+const getCommentByPostId = async (req: Request, res: Response) => {
+  const result = await commentService.getCommentByPostId(
+    req.params.postId as string,
   );
 
   sendResponse(res, {
@@ -93,7 +93,7 @@ export const commentController = {
   createComment,
   moderateComment,
   getCommentByAuthorId,
-  getCommentById,
+getCommentByPostId
   updateComment,
   deleteComment,
 };
