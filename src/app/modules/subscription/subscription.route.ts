@@ -12,6 +12,11 @@ router.post(
 );
 
 router.post("/webhook", subscriptionController.handlerWebHook);
+router.get(
+  "/status",
+  auth(Role.USER, Role.AUTHOR, Role.ADMIN),
+  subscriptionController.getSubscriptionStatus,
+);
 
 const subscriptionRouter = router;
 export default subscriptionRouter;

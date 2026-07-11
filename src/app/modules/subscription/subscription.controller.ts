@@ -35,7 +35,24 @@ const handlerWebHook = async (req: Request, res: Response) => {
     data: null,
   });
 };
+
+const getSubscriptionStatus = async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+
+  const result = await subscriptionServices.getSubscriptionStatus(
+    userId as string,
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Subscription status retrived Successfully",
+    data: result,
+  });
+};
+
 export const subscriptionController = {
   createCheckoutSession,
   handlerWebHook,
+  getSubscriptionStatus,
 };

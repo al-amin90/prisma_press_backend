@@ -10,6 +10,7 @@ import { commentRouter } from "./app/modules/comment/comment.route";
 import { postRouter } from "./app/modules/post/post.route";
 import subscriptionRouter from "./app/modules/subscription/subscription.route";
 import { stripe } from "./lib/stripe";
+import premiumRouter from "./app/modules/premium/premium.route";
 
 const app: Application = express();
 
@@ -41,6 +42,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/posts", postRouter);
 app.use("/api/comments", commentRouter);
 app.use("/api/subscription", subscriptionRouter);
+app.use("/api/premium", premiumRouter);
 
 app.get("/", (req, res) => {
   res.send(`This app listening on port ${3000}`);
