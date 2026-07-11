@@ -3,13 +3,14 @@ import sendResponse from "../../utils/sendResponse";
 import { premiumServices } from "./premium.service";
 
 const getPremiumContent = async (req: Request, res: Response) => {
-  const result = await premiumServices.getPremiumContent();
+  const result = await premiumServices.getPremiumContent(req.query);
 
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "Premium Content Retrived Successfully",
-    data: result,
+    data: result.data,
+    meta: result.meta,
   });
 };
 

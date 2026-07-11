@@ -5,6 +5,20 @@ import AppError from "../../utils/AppError";
 import type { ICreatePostPayload, IPostQuery } from "./post.interface";
 
 const createPost = async (payload: ICreatePostPayload, userId: string) => {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: userId,
+    },
+    include: {
+      subscription: true,
+    },
+  });
+
+  if (payload.isPremium && user.subscription?.status !== "ACTIVE") {
+    throw new Error(
+      "You are not Premium user. You cant create premium content",
+    );
+  }
   const result = await prisma.post.create({
     data: {
       ...payload,
@@ -66,6 +80,10 @@ const getAllPosts = async (query: IPostQuery) => {
     });
   }
 
+  andCondition.push({
+    isPremium: false,
+  });
+
   const result = await prisma.post.findMany({
     // searching & filtering combain
     // where: {
@@ -120,7 +138,22 @@ const getAllPosts = async (query: IPostQuery) => {
       comments: true,
     },
   });
-  return result;
+
+  const totalCount = await prisma.post.count({
+    where: {
+      AND: andCondition,
+    },
+  });
+
+  return {
+    data: result,
+    meta: {
+      page,
+      limit,
+      total: totalCount,
+      totalPage: Math.ceil(totalCount / limit),
+    },
+  };
 };
 
 const getPostById = async (postId: string) => {
@@ -144,6 +177,7 @@ const getPostById = async (postId: string) => {
     const post = await tx.post.findUniqueOrThrow({
       where: {
         id: postId,
+        isPremium: false,
       },
 
       include: {

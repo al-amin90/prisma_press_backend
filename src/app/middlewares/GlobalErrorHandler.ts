@@ -27,7 +27,7 @@ const GlobalErrorHandler: ErrorRequestHandler = (
     } else if (err.code === "P2003") {
       statusCode = 400;
       message = "Foreign key constraint failed";
-    } else if (err.code === "2025") {
+    } else if (err.code === "P2025") {
       statusCode = 400;
       message =
         "An operation failed because it depends on one or more records that ware required but not found";
