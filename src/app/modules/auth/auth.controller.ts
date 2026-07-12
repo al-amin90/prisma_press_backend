@@ -2,10 +2,11 @@
 
 import { authServices } from "./auth.service";
 import config from "../../config";
+import { catchAsync } from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import type { Request, Response } from "express";
 
-const loginUser = async (req: Request, res: Response) => {
+const loginUser = catchAsync(async (req: Request, res: Response) => {
   const result = await authServices.loginUser(req.body);
 
   const { refreshToken, accessToken } = result;
@@ -33,9 +34,9 @@ const loginUser = async (req: Request, res: Response) => {
       refreshToken,
     },
   });
-};
+});
 
-const refreshToken = async (req: Request, res: Response) => {
+const refreshToken = catchAsync(async (req: Request, res: Response) => {
   const { refreshToken } = req.cookies;
 
   const { accessToken } = await authServices.refreshToken(refreshToken);
@@ -55,7 +56,7 @@ const refreshToken = async (req: Request, res: Response) => {
       accessToken,
     },
   });
-};
+});
 
 export const authControllers = {
   loginUser,

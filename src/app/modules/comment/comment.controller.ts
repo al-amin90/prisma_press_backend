@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import config from "../../config";
 import sendResponse from "../../utils/sendResponse";
 import type { Request, Response } from "express";
+import { catchAsync } from "../../utils/catchAsync";
 import { commentService } from "./comment.service";
 
-const createComment = async (req: Request, res: Response) => {
+const createComment = catchAsync(async (req: Request, res: Response) => {
   const result = await commentService.createComment(
     req.user?.id as string,
     req.body,
@@ -17,9 +17,9 @@ const createComment = async (req: Request, res: Response) => {
     message: "Comment Post Successfully",
     data: result,
   });
-};
+});
 
-const getCommentByAuthorId = async (req: Request, res: Response) => {
+const getCommentByAuthorId = catchAsync(async (req: Request, res: Response) => {
   const result = await commentService.getCommentByAuthorId(
     req.params.authorId as string,
   );
@@ -30,9 +30,9 @@ const getCommentByAuthorId = async (req: Request, res: Response) => {
     message: "All Author Comment Get Successfully",
     data: result,
   });
-};
+});
 
-const getCommentByPostId = async (req: Request, res: Response) => {
+const getCommentByPostId = catchAsync(async (req: Request, res: Response) => {
   const result = await commentService.getCommentByPostId(
     req.params.postId as string,
   );
@@ -43,9 +43,9 @@ const getCommentByPostId = async (req: Request, res: Response) => {
     message: "User is logged in Successfully",
     data: result,
   });
-};
+});
 
-const updateComment = async (req: Request, res: Response) => {
+const updateComment = catchAsync(async (req: Request, res: Response) => {
   const result = await commentService.updateComment(
     req.user?.id as string,
     req.params.commentId as string,
@@ -58,9 +58,9 @@ const updateComment = async (req: Request, res: Response) => {
     message: "Comment Updated Successfully",
     data: result,
   });
-};
+});
 
-const moderateComment = async (req: Request, res: Response) => {
+const moderateComment = catchAsync(async (req: Request, res: Response) => {
   const result = await commentService.updateComment(
     req.user?.id as string,
     req.params.commentId as string,
@@ -73,9 +73,9 @@ const moderateComment = async (req: Request, res: Response) => {
     message: "Comment Status Change Successfully",
     data: result,
   });
-};
+});
 
-const deleteComment = async (req: Request, res: Response) => {
+const deleteComment = catchAsync(async (req: Request, res: Response) => {
   const result = await commentService.deleteComment(
     req.user?.id as string,
     req.params.commentId as string,
@@ -87,13 +87,13 @@ const deleteComment = async (req: Request, res: Response) => {
     message: "Comment Deleted Successfully",
     data: result,
   });
-};
+});
 
 export const commentController = {
   createComment,
   moderateComment,
   getCommentByAuthorId,
-getCommentByPostId
+  getCommentByPostId,
   updateComment,
   deleteComment,
 };

@@ -2,10 +2,11 @@
 
 import sendResponse from "../../utils/sendResponse";
 import type { Request, Response } from "express";
+import { catchAsync } from "../../utils/catchAsync";
 import { postServices } from "./post.service";
 import { Role } from "../../../../generated/prisma/enums";
 
-const createPost = async (req: Request, res: Response) => {
+const createPost = catchAsync(async (req: Request, res: Response) => {
   const result = await postServices.createPost(
     req.body,
     req.user?.id as string,
@@ -17,9 +18,9 @@ const createPost = async (req: Request, res: Response) => {
     message: "Post created successfully",
     data: result,
   });
-};
+});
 
-const getAllPosts = async (req: Request, res: Response) => {
+const getAllPosts = catchAsync(async (req: Request, res: Response) => {
   const result = await postServices.getAllPosts(req.query);
 
   sendResponse(res, {
@@ -29,9 +30,9 @@ const getAllPosts = async (req: Request, res: Response) => {
     data: result.data,
     meta: result.meta,
   });
-};
+});
 
-const getPostById = async (req: Request, res: Response) => {
+const getPostById = catchAsync(async (req: Request, res: Response) => {
   const postId = req.params.postId;
 
   if (!postId) {
@@ -45,9 +46,9 @@ const getPostById = async (req: Request, res: Response) => {
     message: "posts retrieved Successfully",
     data: result,
   });
-};
+});
 
-const getPostsStats = async (req: Request, res: Response) => {
+const getPostsStats = catchAsync(async (req: Request, res: Response) => {
   const result = await postServices.getPostsStats();
 
   sendResponse(res, {
@@ -56,9 +57,9 @@ const getPostsStats = async (req: Request, res: Response) => {
     message: "Posts stats retrieved Successfully",
     data: result,
   });
-};
+});
 
-const getMyPosts = async (req: Request, res: Response) => {
+const getMyPosts = catchAsync(async (req: Request, res: Response) => {
   const result = await postServices.getMyPosts(req.user?.id as string);
 
   sendResponse(res, {
@@ -67,9 +68,9 @@ const getMyPosts = async (req: Request, res: Response) => {
     message: "Author posts retrieved Successfully",
     data: result,
   });
-};
+});
 
-const updatePost = async (req: Request, res: Response) => {
+const updatePost = catchAsync(async (req: Request, res: Response) => {
   const postId = req.params.postId;
 
   if (!postId) {
@@ -89,9 +90,9 @@ const updatePost = async (req: Request, res: Response) => {
     message: "Post updated successfully",
     data: result,
   });
-};
+});
 
-const deletePost = async (req: Request, res: Response) => {
+const deletePost = catchAsync(async (req: Request, res: Response) => {
   const postId = req.params.postId;
 
   if (!postId) {
@@ -110,7 +111,7 @@ const deletePost = async (req: Request, res: Response) => {
     message: "Post Deleted Successfully",
     data: null,
   });
-};
+});
 
 export const postControllers = {
   createPost,

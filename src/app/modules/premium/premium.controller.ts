@@ -1,8 +1,9 @@
 import type { Request, Response } from "express";
+import { catchAsync } from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { premiumServices } from "./premium.service";
 
-const getPremiumContent = async (req: Request, res: Response) => {
+const getPremiumContent = catchAsync(async (req: Request, res: Response) => {
   const result = await premiumServices.getPremiumContent(req.query);
 
   sendResponse(res, {
@@ -12,7 +13,7 @@ const getPremiumContent = async (req: Request, res: Response) => {
     data: result.data,
     meta: result.meta,
   });
-};
+});
 
 export const premiumController = {
   getPremiumContent,

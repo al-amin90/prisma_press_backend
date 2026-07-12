@@ -1,8 +1,9 @@
 import type { Request, Response } from "express";
+import { catchAsync } from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { userServices } from "./user.service";
 
-const registerUser = async (req: Request, res: Response) => {
+const registerUser = catchAsync(async (req: Request, res: Response) => {
   const { user } = await userServices.registerUserIntoDB(req.body);
 
   sendResponse(res, {
@@ -11,9 +12,9 @@ const registerUser = async (req: Request, res: Response) => {
     message: "User Created Successfully",
     data: { user },
   });
-};
+});
 
-const getMyProfile = async (req: Request, res: Response) => {
+const getMyProfile = catchAsync(async (req: Request, res: Response) => {
   // const { accessToken } = req.cookies;
 
   // const verifiedToken = jwtUtils.verifyToken(
@@ -29,9 +30,9 @@ const getMyProfile = async (req: Request, res: Response) => {
     message: "User Info Get Successfully",
     data: result,
   });
-};
+});
 
-const updateMyProfile = async (req: Request, res: Response) => {
+const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
   const result = await userServices.updateUserFromDB(
     req.user?.id as string,
     req.body,
@@ -43,7 +44,7 @@ const updateMyProfile = async (req: Request, res: Response) => {
     message: "Profile Updated Successfully",
     data: result,
   });
-};
+});
 
 export const userController = {
   registerUser,
